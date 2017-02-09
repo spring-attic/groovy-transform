@@ -18,11 +18,10 @@ package org.springframework.cloud.stream.app.groovy.transform.processor;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.test.IntegrationTest;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.boot.test.WebIntegrationTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.stream.annotation.Bindings;
 import org.springframework.cloud.stream.messaging.Processor;
 import org.springframework.cloud.stream.test.binder.MessageCollector;
@@ -43,9 +42,6 @@ import static org.springframework.cloud.stream.test.matcher.MessageQueueMatcher.
  * @author Gary Russell
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(
-		classes = GroovyTransformProcessorIntegrationTests.GroovyTransformProcessorApplication.class)
-@WebIntegrationTest(randomPort = true)
 @DirtiesContext
 public abstract class GroovyTransformProcessorIntegrationTests {
 
@@ -56,7 +52,7 @@ public abstract class GroovyTransformProcessorIntegrationTests {
 	@Autowired
 	protected MessageCollector collector;
 
-	@IntegrationTest({"groovy-transformer.script=script.groovy", "groovy-transformer.variables=limit=5\\n foo=\\\\\40WORLD"})
+	@SpringBootTest({"groovy-transformer.script=script.groovy", "groovy-transformer.variables=limit=5\\n foo=\\\\\40WORLD"})
 	public static class UsingScriptIntegrationTests extends GroovyTransformProcessorIntegrationTests {
 
 		@Test
