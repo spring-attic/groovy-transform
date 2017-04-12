@@ -18,6 +18,7 @@ package org.springframework.cloud.stream.app.groovy.transform.processor;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.core.io.Resource;
+import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;
 import java.util.Properties;
@@ -28,6 +29,7 @@ import java.util.Properties;
  * @author Eric Bottard
  */
 @ConfigurationProperties("groovy-transformer")
+@Validated
 public class GroovyTransformProcessorProperties {
 
 	/**
