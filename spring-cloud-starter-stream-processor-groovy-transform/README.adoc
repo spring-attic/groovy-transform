@@ -3,6 +3,26 @@
 
 A Processor module that transforms messages using a Groovy script.
 
+== Input
+
+=== Headers
+
+N/A
+
+=== Payload
+
+* Any
+
+== Output
+
+=== Headers
+
+N/A
+
+=== Payload
+
+* Any
+
 == Options
 
 The **$$groovy-transform$$** $$processor$$ has the following options:
@@ -14,8 +34,20 @@ $$groovy-transformer.variables-location$$:: $$The location of a properties file 
 //end::configuration-properties[]
 
 //end::ref-doc[]
-== Building with Maven
+== Build
 
 ```
-$> mvn package
+$ ./mvnw clean install -PgenerateApps
+$ cd apps
+```
+You can find the corresponding binder based projects here.
+You can then cd into one one of the folders and build it:
+```
+$ ./mvnw clean package
+```
+
+== Examples
+
+```
+java -jar groovy-transform-processor.jar --script=script.groovy
 ```
