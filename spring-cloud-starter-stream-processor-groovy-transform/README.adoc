@@ -33,7 +33,6 @@ $$groovy-transformer.variables$$:: $$Variable bindings as a new line delimited s
 $$groovy-transformer.variables-location$$:: $$The location of a properties file containing custom script variable bindings.$$ *($$Resource$$, default: `$$<none>$$`)*
 //end::configuration-properties[]
 
-//end::ref-doc[]
 == Build
 
 ```
@@ -51,3 +50,5 @@ $ ./mvnw clean package
 ```
 java -jar groovy-transform-processor.jar --script=script.groovy
 ```
+
+//end::ref-doc[]
