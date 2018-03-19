@@ -18,15 +18,14 @@ package org.springframework.cloud.stream.app.groovy.transform.processor;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.stream.annotation.Bindings;
 import org.springframework.cloud.stream.messaging.Processor;
 import org.springframework.cloud.stream.test.binder.MessageCollector;
 import org.springframework.messaging.support.GenericMessage;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static org.hamcrest.Matchers.is;
@@ -42,17 +41,19 @@ import static org.springframework.cloud.stream.test.matcher.MessageQueueMatcher.
  * @author Gary Russell
  */
 @RunWith(SpringJUnit4ClassRunner.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @DirtiesContext
 public abstract class GroovyTransformProcessorIntegrationTests {
 
 	@Autowired
-	@Bindings(GroovyTransformProcessorConfiguration.class)
 	protected Processor channels;
 
 	@Autowired
 	protected MessageCollector collector;
 
-	@SpringBootTest({"groovy-transformer.script=script.groovy", "groovy-transformer.variables=limit=5\\n foo=\\\\\40WORLD"})
+	@TestPropertySource(properties = {
+			"groovy-transformer.script=script.groovy",
+			"groovy-transformer.variables=limit=5\\n foo=\\\\\40WORLD" })
 	public static class UsingScriptIntegrationTests extends GroovyTransformProcessorIntegrationTests {
 
 		@Test
