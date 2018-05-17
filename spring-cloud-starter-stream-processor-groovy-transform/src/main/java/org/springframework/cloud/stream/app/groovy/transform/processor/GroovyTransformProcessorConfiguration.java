@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 the original author or authors.
+ * Copyright 2015-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.messaging.Processor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.integration.annotation.Transformer;
+import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.integration.groovy.GroovyScriptExecutingMessageProcessor;
 import org.springframework.integration.handler.MessageProcessor;
 import org.springframework.integration.scripting.ScriptVariableGenerator;
@@ -35,6 +35,7 @@ import org.springframework.scripting.support.ResourceScriptSource;
  * @author Mark Fisher
  * @author Marius Bogoevici
  * @author Gary Russell
+ * @author Christian Tzolov
  */
 @EnableBinding(Processor.class)
 @EnableConfigurationProperties(GroovyTransformProcessorProperties.class)
@@ -48,7 +49,7 @@ public class GroovyTransformProcessorConfiguration {
 	private GroovyTransformProcessorProperties properties;
 
 	@Bean
-	@Transformer(inputChannel = Processor.INPUT, outputChannel = Processor.OUTPUT)
+	@ServiceActivator(inputChannel = Processor.INPUT, outputChannel = Processor.OUTPUT)
 	public MessageProcessor<?> transformer() {
 		return new GroovyScriptExecutingMessageProcessor(
 				new ResourceScriptSource(properties.getScript()), scriptVariableGenerator);
