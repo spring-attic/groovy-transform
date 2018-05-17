@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 the original author or authors.
+ * Copyright 2015-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,24 @@
 
 package org.springframework.cloud.stream.app.groovy.transform.processor;
 
+import java.util.Collections;
+import java.util.Map;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.stream.messaging.Processor;
 import org.springframework.cloud.stream.test.binder.MessageCollector;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.support.GenericMessage;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.util.MimeType;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -39,6 +46,7 @@ import static org.springframework.cloud.stream.test.matcher.MessageQueueMatcher.
  * @author Marius Bogoevici
  * @author Artem Bilan
  * @author Gary Russell
+ * @author Christian Tzolov
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
@@ -62,6 +70,26 @@ public abstract class GroovyTransformProcessorIntegrationTests {
 			assertThat(collector.forChannel(channels.output()), receivesPayloadThat(is("hello WORLD")));
 		}
 
+	}
+
+	@TestPropertySource(properties = {
+			"groovy-transformer.script=script-convert-outbound-payload-type-to-string.groovy",
+			"spring.cloud.stream.bindings.output.contentType=text/plain" })
+	public static class MisalignedOutboundPayloadAndContentTypeTypes extends GroovyTransformProcessorIntegrationTests {
+
+		@Test
+		public void test() throws InterruptedException {
+			// The inbound message with byte-array payload and content-type=octet-stream and outbound payload is String
+			Map<String, Object> inboundHeaders = Collections.singletonMap(MessageHeaders.CONTENT_TYPE, "application/octet-stream");
+			channels.input().send(new GenericMessage<Object>("hello world".getBytes(), inboundHeaders));
+
+			Message<?> outboundMessage = collector.forChannel(channels.output()).take();
+			assertThat(outboundMessage.getPayload(), is("HELLO WORLD"));
+			// Outbound Header contentType should match the spring.cloud.stream.bindings.output.contentType property
+			// or defaults to application/json if not set explicitly.
+			assertThat("Outbound Header contentType should match the spring.cloud.stream.bindings.output.contentType",
+					outboundMessage.getHeaders().get(MessageHeaders.CONTENT_TYPE), is(MimeType.valueOf("text/plain")));
+		}
 	}
 
 	@SpringBootApplication
