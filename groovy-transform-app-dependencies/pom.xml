@@ -9,7 +9,7 @@
     <description>Spring Cloud Stream Groovy Transform App Dependencies</description>
 
     <parent>
-    <artifactId>spring-cloud-dependencies-parent</artifactId>
+        <artifactId>spring-cloud-dependencies-parent</artifactId>
         <groupId>org.springframework.cloud</groupId>
         <version>2.1.0.RC3</version>
         <relativePath />
