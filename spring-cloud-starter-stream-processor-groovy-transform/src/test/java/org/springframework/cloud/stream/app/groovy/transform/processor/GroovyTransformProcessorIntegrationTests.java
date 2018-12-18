@@ -47,6 +47,7 @@ import static org.springframework.cloud.stream.test.matcher.MessageQueueMatcher.
  * @author Artem Bilan
  * @author Gary Russell
  * @author Christian Tzolov
+ * @author Haytham Mohamed
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
@@ -90,6 +91,17 @@ public abstract class GroovyTransformProcessorIntegrationTests {
 			assertThat("Outbound Header contentType should match the spring.cloud.stream.bindings.output.contentType",
 					outboundMessage.getHeaders().get(MessageHeaders.CONTENT_TYPE), is(MimeType.valueOf("text/plain")));
 		}
+	}
+
+	@TestPropertySource(properties = {"groovy-transformer.script=script-with-grab.groovy"})
+	public static class UsingScriptWithGrabIntegrationTests extends GroovyTransformProcessorIntegrationTests {
+
+		@Test
+		public void test() {
+			channels.input().send(new GenericMessage<Object>("def age=18"));
+			assertThat(collector.forChannel(channels.output()), receivesPayloadThat(is("var age = 18;\n")));
+		}
+
 	}
 
 	@SpringBootApplication
