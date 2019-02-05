@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,10 @@
  */
 
 package org.springframework.cloud.stream.app.groovy.transform.processor;
+
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+import static org.springframework.cloud.stream.test.matcher.MessageQueueMatcher.receivesPayloadThat;
 
 import java.util.Collections;
 import java.util.Map;
@@ -34,10 +38,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.MimeType;
-
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-import static org.springframework.cloud.stream.test.matcher.MessageQueueMatcher.receivesPayloadThat;
 
 /**
  * Integration Tests for the Groovy Transform Processor.
@@ -81,7 +81,8 @@ public abstract class GroovyTransformProcessorIntegrationTests {
 		@Test
 		public void test() throws InterruptedException {
 			// The inbound message with byte-array payload and content-type=octet-stream and outbound payload is String
-			Map<String, Object> inboundHeaders = Collections.singletonMap(MessageHeaders.CONTENT_TYPE, "application/octet-stream");
+			Map<String, Object> inboundHeaders = Collections
+					.singletonMap(MessageHeaders.CONTENT_TYPE, "application/octet-stream");
 			channels.input().send(new GenericMessage<Object>("hello world".getBytes(), inboundHeaders));
 
 			Message<?> outboundMessage = collector.forChannel(channels.output()).take();
@@ -91,15 +92,17 @@ public abstract class GroovyTransformProcessorIntegrationTests {
 			assertThat("Outbound Header contentType should match the spring.cloud.stream.bindings.output.contentType",
 					outboundMessage.getHeaders().get(MessageHeaders.CONTENT_TYPE), is(MimeType.valueOf("text/plain")));
 		}
+
 	}
 
-	@TestPropertySource(properties = {"groovy-transformer.script=script-with-grab.groovy"})
+	@TestPropertySource(properties = { "groovy-transformer.script=script-with-grab.groovy" })
 	public static class UsingScriptWithGrabIntegrationTests extends GroovyTransformProcessorIntegrationTests {
 
 		@Test
 		public void test() {
 			channels.input().send(new GenericMessage<Object>("def age=18"));
-			assertThat(collector.forChannel(channels.output()), receivesPayloadThat(is("var age = 18;\n")));
+			assertThat(collector.forChannel(channels.output()),
+					receivesPayloadThat(is("var age = 18;" + System.lineSeparator())));
 		}
 
 	}
