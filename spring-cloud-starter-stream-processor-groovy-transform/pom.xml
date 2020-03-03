@@ -79,6 +79,7 @@
 							<noAppSpecificTestSupportArtifact>true</noAppSpecificTestSupportArtifact>
 						</groovy-transform-processor>
 					</generatedApps>
+					<enableContainerImageMetadata>true</enableContainerImageMetadata>
 				</configuration>
 			</plugin>
 		</plugins>
